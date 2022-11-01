@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">DailyNotesApp</string>
     <string name="text_splash_title">Daily Notes App</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="text_login">Login</string>
 </resources>

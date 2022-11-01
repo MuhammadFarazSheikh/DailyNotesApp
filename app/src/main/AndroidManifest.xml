@@ -13,11 +13,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DailyNotesApp"
         tools:targetApi="31">
+        <activity android:name=".activities.LoginSignUpScreen"/>
         <activity
-            android:name=".activities.SplashScreen"
+            android:name=".activities.DashboardScreen"
             android:exported="false" />
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.SplashScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
