@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,7 +50,8 @@ fun setupLoginScreen()
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color.Transparent,
                     unfocusedBorderColor = Color.Transparent,
-                    textColor = Color.White
+                    textColor = Color.White,
+                    cursorColor = Color.Black
                 ),
                 placeholder = {
                     Text(
@@ -76,7 +79,8 @@ fun setupLoginScreen()
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color.Transparent,
                     unfocusedBorderColor = Color.Transparent,
-                    textColor = Color.White
+                    textColor = Color.White,
+                    cursorColor = Color.Black
                 ),
                 placeholder = {
                     Text(
@@ -88,7 +92,8 @@ fun setupLoginScreen()
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password
-                )
+                ),
+                visualTransformation = PasswordVisualTransformation()
             )
 
             TextButton(

@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.composesample.dailynotesapp.R
 import com.composesample.dailynotesapp.activities.utils.PreferenceDataStore
@@ -77,7 +76,6 @@ class SplashScreen : AppCompatActivity() {
         }
     }
 
-    @Preview
     @Composable
     fun splashScreenUI()
     {
