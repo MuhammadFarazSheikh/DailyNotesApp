@@ -25,11 +25,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composesample.dailynotesapp.R
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 @Preview
 @Composable
 fun setupSignUpScreen()
 {
+    val isAddToFireStore = remember { mutableStateOf(false) }
+    val textFieldFullName = remember{ mutableStateOf(String()) }
     val textFieldEmailState = remember{ mutableStateOf(String()) }
     val textFieldPasswordState = remember{ mutableStateOf(String()) }
 
@@ -45,18 +49,21 @@ fun setupSignUpScreen()
                 painter = painterResource(R.drawable.signup_icon),
                 contentDescription ="",
                 colorFilter = ColorFilter.tint(color = Color.LightGray),
-                modifier = Modifier.height(150.dp).width(150.dp).align(Alignment.CenterHorizontally)
+                modifier = Modifier
+                    .height(150.dp)
+                    .width(150.dp)
+                    .align(Alignment.CenterHorizontally)
             )
 
             TextField(
-                value = textFieldEmailState.value ,
+                value = textFieldFullName.value ,
                 onValueChange = { value->
-                    textFieldEmailState.value = value
+                    textFieldFullName.value = value
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(0.dp,50.dp,0.dp,0.dp)
+                    .padding(0.dp, 50.dp, 0.dp, 0.dp)
                     .background(color = Color.LightGray, RoundedCornerShape(5.dp)),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color.Transparent,
@@ -85,7 +92,7 @@ fun setupSignUpScreen()
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(0.dp,13.dp,0.dp,0.dp)
+                    .padding(0.dp, 13.dp, 0.dp, 0.dp)
                     .background(color = Color.LightGray, RoundedCornerShape(5.dp)),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color.Transparent,
@@ -137,7 +144,9 @@ fun setupSignUpScreen()
             )
 
             TextButton(
-                onClick = { },
+                onClick = {
+                          isAddToFireStore.value = true
+                },
                 content = {
                     Text(
                         stringResource(R.string.text_signup),
@@ -157,4 +166,15 @@ fun setupSignUpScreen()
             )
         },
     )
+
+    if(isAddToFireStore.value)
+    {
+        Firebase
+            .firestore
+            .collection("Users")
+            .document(textFieldFullName.value).set(hashMapOf("Email" to textFieldFullName.value))
+            .addOnSuccessListener {
+                isAddToFireStore.value = false
+            }
+    }
 }
