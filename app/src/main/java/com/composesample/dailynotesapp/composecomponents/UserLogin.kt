@@ -1,5 +1,6 @@
 package com.composesample.dailynotesapp.composecomponents
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import com.composesample.dailynotesapp.R
@@ -15,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -38,6 +41,14 @@ fun setupLoginScreen()
             .background(color = Color.White)
             .padding(15.dp, 40.dp, 15.dp, 0.dp),
         content = {
+
+            Image(
+                painter = painterResource(R.drawable.login_icon),
+                contentDescription ="",
+                colorFilter = ColorFilter.tint(color = Color.LightGray),
+                modifier = Modifier.height(150.dp).width(150.dp).align(Alignment.CenterHorizontally)
+            )
+
             TextField(
                 value = textFieldEmailState.value ,
                 onValueChange = { value->
@@ -46,6 +57,7 @@ fun setupLoginScreen()
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
+                    .padding(0.dp,50.dp,0.dp,0.dp)
                     .background(color = Color.LightGray, RoundedCornerShape(5.dp)),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color.Transparent,
