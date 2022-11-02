@@ -18,10 +18,12 @@ fun setupHorizontalPager(pagerState: PagerState)
             when(index)
             {
                 0-> setupLoginScreen()
-                1-> setupLoginScreen()
+                1-> setupSignUpScreen()
             }
         },
         state = pagerState,
-        modifier = Modifier.fillMaxWidth().fillMaxHeight()
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
     )
 }
