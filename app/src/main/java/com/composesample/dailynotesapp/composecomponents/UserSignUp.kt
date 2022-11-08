@@ -25,6 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composesample.dailynotesapp.R
+import com.composesample.dailynotesapp.utils.showLoaderAlert
+import com.composesample.dailynotesapp.utils.showMessageAlertWithOkButton
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -32,6 +34,8 @@ import com.google.firebase.ktx.Firebase
 @Composable
 fun setupSignUpScreen()
 {
+    val isShowLoaderAlertDialoge = remember{ mutableStateOf(false) }
+    val isShowRegisterSuccessAlertDialoge = remember{ mutableStateOf(false) }
     val isAddToFireStore = remember { mutableStateOf(false) }
     val textFieldFullName = remember{ mutableStateOf(String()) }
     val textFieldEmailState = remember{ mutableStateOf(String()) }
@@ -169,12 +173,42 @@ fun setupSignUpScreen()
 
     if(isAddToFireStore.value)
     {
+        isShowLoaderAlertDialoge.value = true
         Firebase
             .firestore
             .collection("Users")
-            .document(textFieldFullName.value).set(hashMapOf("Email" to textFieldFullName.value))
-            .addOnSuccessListener {
+            .document(textFieldEmailState.value).set(
+                hashMapOf(
+                    "Email" to textFieldEmailState.value,
+                    "Password" to textFieldPasswordState.value,
+                    "FullName" to textFieldFullName.value
+                )
+            )
+            .addOnCanceledListener {
+                isAddToFireStore.value = false
+            }.addOnSuccessListener {
+                isShowLoaderAlertDialoge.value = false
+                isShowRegisterSuccessAlertDialoge.value = true
+                isAddToFireStore.value = false
+            }.addOnCompleteListener {
+                isAddToFireStore.value = false
+            }.addOnFailureListener {
                 isAddToFireStore.value = false
             }
+    }
+
+    if(isShowRegisterSuccessAlertDialoge.value) {
+        showMessageAlertWithOkButton(
+            stringResource(R.string.text_alert),
+            stringResource(R.string.text_message),
+            okButton = {
+                isShowRegisterSuccessAlertDialoge.value = false
+            }
+        )
+    }
+
+    if(isShowLoaderAlertDialoge.value)
+    {
+        showLoaderAlert(stringResource(R.string.text_signup_loading_text))
     }
 }

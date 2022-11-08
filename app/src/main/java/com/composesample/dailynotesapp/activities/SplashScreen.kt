@@ -21,10 +21,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.composesample.dailynotesapp.R
 import com.composesample.dailynotesapp.activities.utils.PreferenceDataStore
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SplashScreen : AppCompatActivity() {
 
     private lateinit var coroutineScope:CoroutineScope

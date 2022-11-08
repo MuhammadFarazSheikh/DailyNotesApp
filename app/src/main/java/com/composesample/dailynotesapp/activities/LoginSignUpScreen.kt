@@ -17,8 +17,10 @@ import com.composesample.dailynotesapp.composecomponents.setupBottomNavigation
 import com.composesample.dailynotesapp.composecomponents.setupHorizontalPager
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 
+@AndroidEntryPoint
 class LoginSignUpScreen : AppCompatActivity() {
 
     private lateinit var coroutineScope: CoroutineScope

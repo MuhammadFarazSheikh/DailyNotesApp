@@ -6,4 +6,8 @@
     <string name="text_login">Login</string>
     <string name="hint_full_name">Full Name</string>
     <string name="text_signup">Sign Up</string>
+    <string name="text_alert">Alert</string>
+    <string name="text_message">Your signup is successful\nYou can login now.</string>
+    <string name="text_ok_button">OK</string>
+    <string name="text_signup_loading_text">Registering user Please wait...</string>
 </resources>
