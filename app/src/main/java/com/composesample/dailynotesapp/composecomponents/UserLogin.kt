@@ -1,6 +1,5 @@
 package com.composesample.dailynotesapp.composecomponents
 
-import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,16 +26,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composesample.dailynotesapp.AppClass.Companion.appContext
-import com.composesample.dailynotesapp.activities.DashboardScreen
-import com.composesample.dailynotesapp.activities.utils.PreferenceDataStore
-import com.composesample.dailynotesapp.models.UserData
-import com.composesample.dailynotesapp.utils.Keys.Companion.FIREBASE_USERS_COLLECTION
 import com.composesample.dailynotesapp.utils.showLoaderAlert
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
+import com.composesample.dailynotesapp.utils.verifyUserLoginWithFirebase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun setupLoginScreen(coroutineScope: CoroutineScope)
@@ -160,35 +152,7 @@ fun setupLoginScreen(coroutineScope: CoroutineScope)
     if(isFirebaseLogin.value)
     {
         isShowLoaderDialoge.value = true
-        Firebase
-            .firestore
-            .collection(FIREBASE_USERS_COLLECTION)
-            .document(textFieldEmailState.value+"-"+textFieldPasswordState.value)
-            .get()
-            .addOnCompleteListener {
-                isFirebaseLogin.value = false
-            }.addOnCanceledListener {
-                isFirebaseLogin.value = false
-            }.addOnFailureListener {
-                isFirebaseLogin.value = false
-            }.addOnSuccessListener { documentSnapshot->
-                isShowLoaderDialoge.value = false
-                isFirebaseLogin.value = false
-
-                if(documentSnapshot.exists())
-                {
-                    coroutineScope.launch {
-                        PreferenceDataStore.setIsUserLoggedIn(true,appContext)
-                        PreferenceDataStore.saveUserData(
-                            Gson().toJson(documentSnapshot.data),
-                            appContext
-                        )
-                        appContext.startActivity(Intent(appContext, DashboardScreen::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                        })
-                    }
-                }
-            }
+        verifyUserLoginWithFirebase(isShowLoaderDialoge,isFirebaseLogin,coroutineScope,textFieldEmailState.value+"-"+textFieldPasswordState.value)
     }
 
     if(isShowLoaderDialoge.value)

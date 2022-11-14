@@ -1,6 +1,5 @@
 package com.composesample.dailynotesapp.composecomponents
 
-import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,21 +22,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composesample.dailynotesapp.AppClass.Companion.appContext
 import com.composesample.dailynotesapp.R
-import com.composesample.dailynotesapp.activities.DashboardScreen
-import com.composesample.dailynotesapp.activities.utils.PreferenceDataStore
-import com.composesample.dailynotesapp.utils.Keys.Companion.FIREBASE_USERS_COLLECTION
+import com.composesample.dailynotesapp.utils.registerUserWithFirebase
 import com.composesample.dailynotesapp.utils.showLoaderAlert
-import com.composesample.dailynotesapp.utils.showMessageAlertWithOkButton
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun setupSignUpScreen(coroutineScope: CoroutineScope)
@@ -195,55 +186,14 @@ fun setupSignUpScreen(coroutineScope: CoroutineScope)
     if(isAddToFireStore.value)
     {
         isShowLoaderAlertDialoge.value = true
-        Firebase
-            .firestore
-            .collection(FIREBASE_USERS_COLLECTION)
-            .document(textFieldEmailState.value+"-"+textFieldPasswordState.value).set(
-                hashMapOf(
-                    "Email" to textFieldEmailState.value,
-                    "Password" to textFieldPasswordState.value,
-                    "FullName" to textFieldFullName.value
-                )
-            )
-            .addOnCanceledListener {
-                isAddToFireStore.value = false
-            }.addOnSuccessListener {
-
-                Firebase
-                    .firestore
-                    .collection(FIREBASE_USERS_COLLECTION)
-                    .document(textFieldEmailState.value+"-"+textFieldPasswordState.value)
-                    .get()
-                    .addOnCompleteListener {
-                        isAddToFireStore.value = false
-                    }.addOnCanceledListener {
-                        isAddToFireStore.value = false
-                    }.addOnFailureListener {
-                        isAddToFireStore.value = false
-                    }.addOnSuccessListener { documentSnapshot->
-                        isAddToFireStore.value = false
-                        isShowLoaderAlertDialoge.value = false
-
-                        if(documentSnapshot.exists())
-                        {
-                            coroutineScope.launch {
-                                PreferenceDataStore.setIsUserLoggedIn(true,appContext)
-                                PreferenceDataStore.saveUserData(
-                                    Gson().toJson(documentSnapshot.data),
-                                    appContext
-                                )
-                                appContext.startActivity(Intent(appContext, DashboardScreen::class.java).apply {
-                                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                                })
-                            }
-                        }
-                    }
-
-            }.addOnCompleteListener {
-                isAddToFireStore.value = false
-            }.addOnFailureListener {
-                isAddToFireStore.value = false
-            }
+        registerUserWithFirebase(
+            isShowLoaderAlertDialoge,
+            isAddToFireStore,
+            coroutineScope,
+            textFieldFullName.value,
+            textFieldEmailState.value,
+            textFieldPasswordState.value
+        )
     }
 
     if(isShowLoaderAlertDialoge.value)
