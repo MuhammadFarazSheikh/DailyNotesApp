@@ -2,8 +2,12 @@ package com.composesample.dailynotesapp.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.compose.material.DrawerState
+import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,13 +33,20 @@ class DashboardScreen : AppCompatActivity() {
     @Preview
     fun dashboardSetup()
     {
+        val coroutineScope = rememberCoroutineScope()
+        val scaffoldState = rememberScaffoldState(DrawerState(initialValue = DrawerValue.Closed))
         Scaffold(
             topBar = {
-                setupTopBar(stringResource(R.string.text_dashboard_title))
+                setupTopBar(
+                    stringResource(R.string.text_dashboard_title),
+                    coroutineScope,
+                    scaffoldState
+                )
             },
             content = { paddingValues ->
 
-            }
+            },
+            scaffoldState = scaffoldState
         )
     }
 }
