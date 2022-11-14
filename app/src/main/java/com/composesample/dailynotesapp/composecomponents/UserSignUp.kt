@@ -1,5 +1,7 @@
 package com.composesample.dailynotesapp.composecomponents
 
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -24,18 +26,23 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.composesample.dailynotesapp.AppClass.Companion.appContext
 import com.composesample.dailynotesapp.R
+import com.composesample.dailynotesapp.activities.DashboardScreen
+import com.composesample.dailynotesapp.activities.utils.PreferenceDataStore
+import com.composesample.dailynotesapp.utils.Keys.Companion.FIREBASE_USERS_COLLECTION
 import com.composesample.dailynotesapp.utils.showLoaderAlert
 import com.composesample.dailynotesapp.utils.showMessageAlertWithOkButton
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-@Preview
 @Composable
-fun setupSignUpScreen()
+fun setupSignUpScreen(coroutineScope: CoroutineScope)
 {
     val isShowLoaderAlertDialoge = remember{ mutableStateOf(false) }
-    val isShowRegisterSuccessAlertDialoge = remember{ mutableStateOf(false) }
     val isAddToFireStore = remember { mutableStateOf(false) }
     val textFieldFullName = remember{ mutableStateOf(String()) }
     val textFieldEmailState = remember{ mutableStateOf(String()) }
@@ -149,7 +156,21 @@ fun setupSignUpScreen()
 
             TextButton(
                 onClick = {
-                          isAddToFireStore.value = true
+                    if(textFieldFullName.value.isNullOrBlank() || textFieldFullName.value.isNullOrEmpty())
+                    {
+                        Toast.makeText(appContext, appContext.getString(R.string.text_fullname_empty),Toast.LENGTH_LONG).show()
+                    }
+                    else if(textFieldEmailState.value.isNullOrBlank() || textFieldEmailState.value.isNullOrEmpty())
+                    {
+                        Toast.makeText(appContext, appContext.getString(R.string.text_email_empty),Toast.LENGTH_LONG).show()
+                    }
+                    else if(textFieldPasswordState.value.isNullOrBlank() || textFieldPasswordState.value.isNullOrEmpty())
+                    {
+                        Toast.makeText(appContext, appContext.getString(R.string.text_password_empty),Toast.LENGTH_LONG).show()
+                    }
+                    else{
+                        isAddToFireStore.value = true
+                    }
                 },
                 content = {
                     Text(
@@ -176,8 +197,8 @@ fun setupSignUpScreen()
         isShowLoaderAlertDialoge.value = true
         Firebase
             .firestore
-            .collection("Users")
-            .document(textFieldEmailState.value).set(
+            .collection(FIREBASE_USERS_COLLECTION)
+            .document(textFieldEmailState.value+"-"+textFieldPasswordState.value).set(
                 hashMapOf(
                     "Email" to textFieldEmailState.value,
                     "Password" to textFieldPasswordState.value,
@@ -187,24 +208,42 @@ fun setupSignUpScreen()
             .addOnCanceledListener {
                 isAddToFireStore.value = false
             }.addOnSuccessListener {
-                isShowLoaderAlertDialoge.value = false
-                isShowRegisterSuccessAlertDialoge.value = true
-                isAddToFireStore.value = false
+
+                Firebase
+                    .firestore
+                    .collection(FIREBASE_USERS_COLLECTION)
+                    .document(textFieldEmailState.value+"-"+textFieldPasswordState.value)
+                    .get()
+                    .addOnCompleteListener {
+                        isAddToFireStore.value = false
+                    }.addOnCanceledListener {
+                        isAddToFireStore.value = false
+                    }.addOnFailureListener {
+                        isAddToFireStore.value = false
+                    }.addOnSuccessListener { documentSnapshot->
+                        isAddToFireStore.value = false
+                        isShowLoaderAlertDialoge.value = false
+
+                        if(documentSnapshot.exists())
+                        {
+                            coroutineScope.launch {
+                                PreferenceDataStore.setIsUserLoggedIn(true,appContext)
+                                PreferenceDataStore.saveUserData(
+                                    Gson().toJson(documentSnapshot.data),
+                                    appContext
+                                )
+                                appContext.startActivity(Intent(appContext, DashboardScreen::class.java).apply {
+                                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                                })
+                            }
+                        }
+                    }
+
             }.addOnCompleteListener {
                 isAddToFireStore.value = false
             }.addOnFailureListener {
                 isAddToFireStore.value = false
             }
-    }
-
-    if(isShowRegisterSuccessAlertDialoge.value) {
-        showMessageAlertWithOkButton(
-            stringResource(R.string.text_alert),
-            stringResource(R.string.text_message),
-            okButton = {
-                isShowRegisterSuccessAlertDialoge.value = false
-            }
-        )
     }
 
     if(isShowLoaderAlertDialoge.value)

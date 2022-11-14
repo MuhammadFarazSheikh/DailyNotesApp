@@ -48,7 +48,7 @@ class LoginSignUpScreen : AppCompatActivity() {
         Scaffold(
             modifier = Modifier.fillMaxWidth().fillMaxHeight(),
             content = { paddingValues->
-                setupHorizontalPager(horizontalPagerState)
+                setupHorizontalPager(horizontalPagerState,coroutineScope)
             },
             bottomBar = {
                 setupBottomNavigation(horizontalPagerState,coroutineScope)

@@ -67,11 +67,16 @@ class SplashScreen : AppCompatActivity() {
                 when(isUserLoggedIn)
                 {
                     true ->{
-
+                        startActivity(Intent(this@SplashScreen,DashboardScreen::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        })
                     }
                     false ->
                     {
-                        startActivity(Intent(this@SplashScreen,LoginSignUpScreen::class.java))
+                        startActivity(Intent(this@SplashScreen,LoginSignUpScreen::class.java)
+                            .apply {
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            })
                     }
                 }
             }

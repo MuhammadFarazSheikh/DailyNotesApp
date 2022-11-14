@@ -1,5 +1,7 @@
 package com.composesample.dailynotesapp.composecomponents
 
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,15 +24,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.composesample.dailynotesapp.AppClass.Companion.appContext
+import com.composesample.dailynotesapp.activities.DashboardScreen
+import com.composesample.dailynotesapp.activities.utils.PreferenceDataStore
+import com.composesample.dailynotesapp.models.UserData
+import com.composesample.dailynotesapp.utils.Keys.Companion.FIREBASE_USERS_COLLECTION
+import com.composesample.dailynotesapp.utils.showLoaderAlert
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-@Preview
 @Composable
-fun setupLoginScreen()
+fun setupLoginScreen(coroutineScope: CoroutineScope)
 {
+    val isShowLoaderDialoge = remember{ mutableStateOf(false) }
+    val isFirebaseLogin = remember{ mutableStateOf(false) }
     val textFieldEmailState = remember{ mutableStateOf(String()) }
     val textFieldPasswordState = remember{ mutableStateOf(String()) }
 
@@ -46,7 +58,10 @@ fun setupLoginScreen()
                 painter = painterResource(R.drawable.login_icon),
                 contentDescription ="",
                 colorFilter = ColorFilter.tint(color = Color.LightGray),
-                modifier = Modifier.height(150.dp).width(150.dp).align(Alignment.CenterHorizontally)
+                modifier = Modifier
+                    .height(150.dp)
+                    .width(150.dp)
+                    .align(Alignment.CenterHorizontally)
             )
 
             TextField(
@@ -57,7 +72,7 @@ fun setupLoginScreen()
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(0.dp,50.dp,0.dp,0.dp)
+                    .padding(0.dp, 50.dp, 0.dp, 0.dp)
                     .background(color = Color.LightGray, RoundedCornerShape(5.dp)),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color.Transparent,
@@ -109,7 +124,19 @@ fun setupLoginScreen()
             )
 
             TextButton(
-                onClick = { },
+                onClick = {
+                    if(textFieldEmailState.value.isNullOrBlank() || textFieldEmailState.value.isNullOrEmpty())
+                    {
+                        Toast.makeText(appContext, appContext.getString(R.string.text_email_empty),Toast.LENGTH_LONG).show()
+                    }
+                    else if(textFieldPasswordState.value.isNullOrBlank() || textFieldPasswordState.value.isNullOrEmpty())
+                    {
+                        Toast.makeText(appContext, appContext.getString(R.string.text_password_empty),Toast.LENGTH_LONG).show()
+                    }
+                    else {
+                        isFirebaseLogin.value = true
+                    }
+                },
                 content = {
                           Text(
                               stringResource(R.string.text_login),
@@ -129,4 +156,45 @@ fun setupLoginScreen()
             )
         },
     )
+
+    if(isFirebaseLogin.value)
+    {
+        isShowLoaderDialoge.value = true
+        Firebase
+            .firestore
+            .collection(FIREBASE_USERS_COLLECTION)
+            .document(textFieldEmailState.value+"-"+textFieldPasswordState.value)
+            .get()
+            .addOnCompleteListener {
+                isFirebaseLogin.value = false
+            }.addOnCanceledListener {
+                isFirebaseLogin.value = false
+            }.addOnFailureListener {
+                isFirebaseLogin.value = false
+            }.addOnSuccessListener { documentSnapshot->
+                isShowLoaderDialoge.value = false
+                isFirebaseLogin.value = false
+
+                if(documentSnapshot.exists())
+                {
+                    coroutineScope.launch {
+                        PreferenceDataStore.setIsUserLoggedIn(true,appContext)
+                        PreferenceDataStore.saveUserData(
+                            Gson().toJson(documentSnapshot.data),
+                            appContext
+                        )
+                        appContext.startActivity(Intent(appContext, DashboardScreen::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                        })
+                    }
+                }
+            }
+    }
+
+    if(isShowLoaderDialoge.value)
+    {
+        showLoaderAlert(
+            stringResource(R.string.text_user_login)
+        )
+    }
 }
