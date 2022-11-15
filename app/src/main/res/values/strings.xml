@@ -18,4 +18,5 @@
     <string name="text_user_not_exist">User doesnot exist.</string>
     <string name="hint_add_note">Enter note</string>
     <string name="text_add_to_notes">Add To Notes</string>
+    <string name="text_adding_to_notes">Please wait...</string>
 </resources>

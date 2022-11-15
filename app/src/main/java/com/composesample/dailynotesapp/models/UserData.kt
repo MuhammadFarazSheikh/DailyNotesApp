@@ -1,7 +1,7 @@
 package com.composesample.dailynotesapp.models
 
 data class UserData(
-    val fullName:String,
-    val email:String,
-    val password:String
+    var fullName:String,
+    var email:String,
+    var password:String
 )

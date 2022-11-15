@@ -15,9 +15,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.composesample.dailynotesapp.R
 import com.composesample.dailynotesapp.activities.Constants.Companion.DAILY_NOTES_LIST_ROUTE
+import com.composesample.dailynotesapp.utils.addNoteToFirebase
+import com.composesample.dailynotesapp.utils.showLoaderAlert
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun addToDailyNotes(navHostController: NavHostController)
+fun addToDailyNotes(navHostController: NavHostController,coroutineScope: CoroutineScope)
 {
     val isAddNoteToFirebase = remember{ mutableStateOf(false) }
     val isShowLoaderAlert = remember{ mutableStateOf(false) }
@@ -52,10 +55,12 @@ fun addToDailyNotes(navHostController: NavHostController)
 
             TextButton(
                 onClick = {
-                    navHostController.navigate(DAILY_NOTES_LIST_ROUTE)
+                    isAddNoteToFirebase.value = true
+                    isShowLoaderAlert.value = true
+                    /*navHostController.navigate(DAILY_NOTES_LIST_ROUTE)
                     {
                         launchSingleTop = true
-                    }
+                    }*/
                 },
                 content = {
                     Text(
@@ -70,7 +75,7 @@ fun addToDailyNotes(navHostController: NavHostController)
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(0.dp,15.dp,0.dp,0.dp)
+                    .padding(0.dp, 15.dp, 0.dp, 0.dp)
             )
         },
         modifier = Modifier
@@ -78,4 +83,14 @@ fun addToDailyNotes(navHostController: NavHostController)
             .fillMaxWidth()
             .padding(20.dp),
     )
+
+    if(isShowLoaderAlert.value)
+    {
+        showLoaderAlert(stringResource(R.string.text_adding_to_notes))
+    }
+
+    if(isAddNoteToFirebase.value)
+    {
+        addNoteToFirebase(isShowLoaderAlert,isAddNoteToFirebase,coroutineScope,noteTextField.value)
+    }
 }

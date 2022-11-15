@@ -47,7 +47,7 @@ class DashboardScreen : AppCompatActivity() {
                 )
             },
             content = { paddingValues ->
-                setupNavigationComponent(navController)
+                setupNavigationComponent(navController,coroutineScope)
             },
             scaffoldState = scaffoldState
         )

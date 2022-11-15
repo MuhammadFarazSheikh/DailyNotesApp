@@ -8,11 +8,15 @@ import com.composesample.dailynotesapp.AppClass.Companion.appContext
 import com.composesample.dailynotesapp.R
 import com.composesample.dailynotesapp.activities.DashboardScreen
 import com.composesample.dailynotesapp.activities.utils.PreferenceDataStore
+import com.composesample.dailynotesapp.models.UserData
+import com.composesample.dailynotesapp.utils.Keys.Companion.FIREBASE_DAILY_NOTES_COLLECTION
+import com.composesample.dailynotesapp.utils.Keys.Companion.FIREBASE_DAILY_NOTES_LIST
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 fun verifyUserLoginWithFirebase(
@@ -58,7 +62,9 @@ fun openDashboard(
     coroutineScope.launch {
         PreferenceDataStore.setIsUserLoggedIn(true, AppClass.appContext)
         PreferenceDataStore.saveUserData(
-            Gson().toJson(documentSnapshot.data),
+            documentSnapshot?.data?.get("FullName").toString(),
+            documentSnapshot?.data?.get("Email").toString(),
+            documentSnapshot?.data?.get("Password").toString(),
             AppClass.appContext
         )
         AppClass.appContext.startActivity(
@@ -100,4 +106,41 @@ fun registerUserWithFirebase(
         }.addOnFailureListener {
             mutableStateCallFirebase.value = false
         }
+}
+
+fun addNoteToFirebase(
+    mutableStateLoader: MutableState<Boolean>,
+    mutableStateCallFirebase: MutableState<Boolean>,
+    coroutineScope: CoroutineScope,
+    noteText: String
+)
+{
+    coroutineScope.launch {
+        PreferenceDataStore.getUserData(appContext).collectLatest { userData ->
+            userData?.email?.let {
+                Firebase
+                    .firestore
+                    .collection(FIREBASE_DAILY_NOTES_COLLECTION)
+                    .document(userData.email).set(
+                        hashMapOf(
+                            FIREBASE_DAILY_NOTES_LIST to arrayListOf<String>(
+                                noteText
+                            )
+                        )
+                    ).addOnCanceledListener {
+                        mutableStateLoader.value = false
+                        mutableStateCallFirebase.value = false
+                    }.addOnSuccessListener {
+                        mutableStateLoader.value = false
+                        mutableStateCallFirebase.value = false
+                    }.addOnFailureListener {
+                        mutableStateLoader.value = false
+                        mutableStateCallFirebase.value = false
+                    }.addOnCompleteListener {
+                        mutableStateLoader.value = false
+                        mutableStateCallFirebase.value = false
+                    }
+            }
+        }
+    }
 }
