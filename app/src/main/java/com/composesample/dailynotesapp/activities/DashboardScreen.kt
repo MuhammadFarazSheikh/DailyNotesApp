@@ -11,7 +11,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import com.composesample.dailynotesapp.R
+import com.composesample.dailynotesapp.composecomponents.setupNavigationComponent
 import com.composesample.dailynotesapp.composecomponents.setupTopBar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,6 +35,7 @@ class DashboardScreen : AppCompatActivity() {
     @Preview
     fun dashboardSetup()
     {
+        val navController = rememberNavController()
         val coroutineScope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(DrawerState(initialValue = DrawerValue.Closed))
         Scaffold(
@@ -44,7 +47,7 @@ class DashboardScreen : AppCompatActivity() {
                 )
             },
             content = { paddingValues ->
-
+                setupNavigationComponent(navController)
             },
             scaffoldState = scaffoldState
         )

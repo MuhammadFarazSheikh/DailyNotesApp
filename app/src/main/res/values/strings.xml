@@ -16,4 +16,6 @@
     <string name="text_fullname_empty">Enter full name</string>
     <string name="text_dashboard_title">Daily Notes</string>
     <string name="text_user_not_exist">User doesnot exist.</string>
+    <string name="hint_add_note">Enter note</string>
+    <string name="text_add_to_notes">Add To Notes</string>
 </resources>
