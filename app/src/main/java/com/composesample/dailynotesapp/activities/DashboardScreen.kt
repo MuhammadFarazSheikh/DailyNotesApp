@@ -15,7 +15,6 @@ import androidx.navigation.compose.rememberNavController
 import com.composesample.dailynotesapp.R
 import com.composesample.dailynotesapp.composecomponents.setupNavigationComponent
 import com.composesample.dailynotesapp.composecomponents.setupTopBar
-import com.composesample.dailynotesapp.utils.getUserDailyNotes
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,7 +38,6 @@ class DashboardScreen : AppCompatActivity() {
         val navController = rememberNavController()
         val coroutineScope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(DrawerState(initialValue = DrawerValue.Closed))
-        getUserDailyNotes(coroutineScope)
         Scaffold(
             topBar = {
                 setupTopBar(

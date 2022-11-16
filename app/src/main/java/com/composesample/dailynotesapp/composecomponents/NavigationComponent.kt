@@ -16,7 +16,7 @@ fun setupNavigationComponent(navController: NavHostController,coroutineScope: Co
             addToDailyNotes(navController,coroutineScope)
         }
         composable(DAILY_NOTES_LIST_ROUTE){
-            dailyNotesListScreen()
+            dailyNotesListScreen(coroutineScope)
         }
     })
 }

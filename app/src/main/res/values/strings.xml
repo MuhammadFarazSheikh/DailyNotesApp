@@ -20,4 +20,5 @@
     <string name="text_add_to_notes">Add To Notes</string>
     <string name="text_adding_to_notes">Please wait...</string>
     <string name="text_notes_list">Notes List</string>
+    <string name="text_loading_user_daily_notes">Loading notes data...</string>
 </resources>

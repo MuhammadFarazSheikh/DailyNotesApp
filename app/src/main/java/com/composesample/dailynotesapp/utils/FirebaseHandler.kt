@@ -3,10 +3,12 @@ package com.composesample.dailynotesapp.utils
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
+import androidx.lifecycle.MutableLiveData
 import com.composesample.dailynotesapp.AppClass
 import com.composesample.dailynotesapp.AppClass.Companion.appContext
 import com.composesample.dailynotesapp.R
 import com.composesample.dailynotesapp.activities.Constants.Companion.dailyNotesList
+import com.composesample.dailynotesapp.activities.Constants.Companion.userDailyNotesListLiveData
 import com.composesample.dailynotesapp.activities.DashboardScreen
 import com.composesample.dailynotesapp.activities.utils.PreferenceDataStore
 import com.composesample.dailynotesapp.models.UserData
@@ -145,7 +147,10 @@ fun addNoteToFirebase(
     }
 }
 
-fun getUserDailyNotes(coroutineScope: CoroutineScope)
+fun getUserDailyNotes(
+    coroutineScope: CoroutineScope,
+    mutableStateLoader: MutableState<Boolean>,
+)
 {
     coroutineScope.launch {
         PreferenceDataStore.getUserData(appContext).collectLatest {userData->
@@ -156,13 +161,18 @@ fun getUserDailyNotes(coroutineScope: CoroutineScope)
                     .document(userData.email)
                     .get()
                     .addOnSuccessListener { documentSnapshot ->
-                        dailyNotesList.addAll(documentSnapshot.get(FIREBASE_DAILY_NOTES_LIST) as Collection<String>)
+                        mutableStateLoader.value = false
+                        userDailyNotesListLiveData.value= documentSnapshot.get(FIREBASE_DAILY_NOTES_LIST) as ArrayList<String>?
+                        userDailyNotesListLiveData?.value?.let {
+                            dailyNotesList.clear()
+                            dailyNotesList.addAll(it)
+                        }
                     }.addOnCanceledListener {
-
+                        mutableStateLoader.value = false
                     }.addOnCompleteListener {
-
+                        mutableStateLoader.value = false
                     }.addOnFailureListener {
-
+                        mutableStateLoader.value = false
                     }
             }
         }
