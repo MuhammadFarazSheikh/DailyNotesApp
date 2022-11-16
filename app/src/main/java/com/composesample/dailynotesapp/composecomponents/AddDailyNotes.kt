@@ -57,10 +57,6 @@ fun addToDailyNotes(navHostController: NavHostController,coroutineScope: Corouti
                 onClick = {
                     isAddNoteToFirebase.value = true
                     isShowLoaderAlert.value = true
-                    /*navHostController.navigate(DAILY_NOTES_LIST_ROUTE)
-                    {
-                        launchSingleTop = true
-                    }*/
                 },
                 content = {
                     Text(
@@ -76,6 +72,29 @@ fun addToDailyNotes(navHostController: NavHostController,coroutineScope: Corouti
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(0.dp, 15.dp, 0.dp, 0.dp)
+            )
+
+            TextButton(
+                onClick = {
+                    navHostController.navigate(DAILY_NOTES_LIST_ROUTE)
+                    {
+                        launchSingleTop = true
+                    }
+                },
+                content = {
+                    Text(
+                        stringResource(R.string.text_notes_list),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray),
+                shape = RoundedCornerShape(25.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(0.dp, 7.dp, 0.dp, 0.dp)
             )
         },
         modifier = Modifier
