@@ -6,6 +6,7 @@ import androidx.compose.runtime.MutableState
 import com.composesample.dailynotesapp.AppClass
 import com.composesample.dailynotesapp.AppClass.Companion.appContext
 import com.composesample.dailynotesapp.R
+import com.composesample.dailynotesapp.activities.Constants.Companion.dailyNotesList
 import com.composesample.dailynotesapp.activities.DashboardScreen
 import com.composesample.dailynotesapp.activities.utils.PreferenceDataStore
 import com.composesample.dailynotesapp.models.UserData
@@ -118,14 +119,13 @@ fun addNoteToFirebase(
     coroutineScope.launch {
         PreferenceDataStore.getUserData(appContext).collectLatest { userData ->
             userData?.email?.let {
+                dailyNotesList.add(noteText)
                 Firebase
                     .firestore
                     .collection(FIREBASE_DAILY_NOTES_COLLECTION)
                     .document(userData.email).set(
                         hashMapOf(
-                            FIREBASE_DAILY_NOTES_LIST to arrayListOf<String>(
-                                noteText
-                            )
+                            FIREBASE_DAILY_NOTES_LIST to dailyNotesList
                         )
                     ).addOnCanceledListener {
                         mutableStateLoader.value = false
@@ -139,6 +139,30 @@ fun addNoteToFirebase(
                     }.addOnCompleteListener {
                         mutableStateLoader.value = false
                         mutableStateCallFirebase.value = false
+                    }
+            }
+        }
+    }
+}
+
+fun getUserDailyNotes(coroutineScope: CoroutineScope)
+{
+    coroutineScope.launch {
+        PreferenceDataStore.getUserData(appContext).collectLatest {userData->
+            userData?.email?.let {
+                Firebase
+                    .firestore
+                    .collection(FIREBASE_DAILY_NOTES_COLLECTION)
+                    .document(userData.email)
+                    .get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        dailyNotesList.addAll(documentSnapshot.get(FIREBASE_DAILY_NOTES_LIST) as Collection<String>)
+                    }.addOnCanceledListener {
+
+                    }.addOnCompleteListener {
+
+                    }.addOnFailureListener {
+
                     }
             }
         }
