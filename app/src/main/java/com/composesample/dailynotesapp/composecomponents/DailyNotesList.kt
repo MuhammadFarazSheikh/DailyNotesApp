@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
@@ -12,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,10 +42,26 @@ fun dailyNotesListScreen(coroutineScope: CoroutineScope)
                 content = {
                     itemsIndexed(it)
                     { index,item->
-                        Text(
-                            text = item,
-                            fontSize = 16.sp,
-                            color = Color.White,
+                        Row(
+                            content = {
+                                Text(
+                                    text = item,
+                                    fontSize = 16.sp,
+                                    color = Color.White,
+                                )
+
+                                IconButton(
+                                    onClick = {
+
+                                    },
+                                    content = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.delete_icon),
+                                            contentDescription =""
+                                        )
+                                    }
+                                )
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .wrapContentHeight()
@@ -50,8 +69,8 @@ fun dailyNotesListScreen(coroutineScope: CoroutineScope)
                                 .background(
                                     color = Color.LightGray,
                                     shape = RoundedCornerShape(5.dp)
-                                )
-                                .padding(7.dp)
+                                ),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         )
                     }
                 },
