@@ -149,7 +149,7 @@ fun addNoteToFirebase(
 
 fun getUserDailyNotes(
     coroutineScope: CoroutineScope,
-    mutableStateLoader: MutableState<Boolean>,
+    mutableStateLoader: MutableState<Boolean>
 )
 {
     coroutineScope.launch {
@@ -172,6 +172,37 @@ fun getUserDailyNotes(
                     }.addOnCompleteListener {
                         mutableStateLoader.value = false
                     }.addOnFailureListener {
+                        mutableStateLoader.value = false
+                    }
+            }
+        }
+    }
+}
+
+fun deleteDailyNote(
+    coroutineScope: CoroutineScope,
+    mutableStateLoader: MutableState<Boolean>,
+    noteListIndex:Int
+)
+{
+    coroutineScope.launch {
+        PreferenceDataStore.getUserData(appContext).collectLatest { userData ->
+            userData?.email?.let { email ->
+                dailyNotesList.removeAt(noteListIndex)
+                Firebase
+                    .firestore
+                    .collection(FIREBASE_DAILY_NOTES_COLLECTION)
+                    .document(email).set(
+                        hashMapOf(
+                            FIREBASE_DAILY_NOTES_LIST to dailyNotesList
+                        )
+                    ).addOnCanceledListener {
+                        mutableStateLoader.value = false
+                    }.addOnSuccessListener {
+                        getUserDailyNotes(coroutineScope,mutableStateLoader)
+                    }.addOnFailureListener {
+                        mutableStateLoader.value = false
+                    }.addOnCompleteListener {
                         mutableStateLoader.value = false
                     }
             }
