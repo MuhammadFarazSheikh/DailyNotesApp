@@ -199,7 +199,8 @@ fun deleteDailyNote(
                     ).addOnCanceledListener {
                         mutableStateLoader.value = false
                     }.addOnSuccessListener {
-                        getUserDailyNotes(coroutineScope,mutableStateLoader)
+                        mutableStateLoader.value = false
+                        userDailyNotesListLiveData.value = dailyNotesList
                     }.addOnFailureListener {
                         mutableStateLoader.value = false
                     }.addOnCompleteListener {
