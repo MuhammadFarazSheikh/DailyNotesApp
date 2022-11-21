@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.composesample.dailynotesapp.R
+import com.composesample.dailynotesapp.composecomponents.setupDrawerMenu
 import com.composesample.dailynotesapp.composecomponents.setupNavigationComponent
 import com.composesample.dailynotesapp.composecomponents.setupTopBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,7 +38,7 @@ class DashboardScreen : AppCompatActivity() {
     {
         val navController = rememberNavController()
         val coroutineScope = rememberCoroutineScope()
-        val scaffoldState = rememberScaffoldState(DrawerState(initialValue = DrawerValue.Closed))
+        val scaffoldState = rememberScaffoldState(DrawerState(initialValue = DrawerValue.Open))
         Scaffold(
             topBar = {
                 setupTopBar(
@@ -49,7 +50,10 @@ class DashboardScreen : AppCompatActivity() {
             content = { paddingValues ->
                 setupNavigationComponent(navController,coroutineScope)
             },
-            scaffoldState = scaffoldState
+            scaffoldState = scaffoldState,
+            drawerContent = {
+                setupDrawerMenu()
+            }
         )
     }
 }
