@@ -38,7 +38,7 @@ class DashboardScreen : AppCompatActivity() {
     {
         val navController = rememberNavController()
         val coroutineScope = rememberCoroutineScope()
-        val scaffoldState = rememberScaffoldState(DrawerState(initialValue = DrawerValue.Open))
+        val scaffoldState = rememberScaffoldState(DrawerState(initialValue = DrawerValue.Closed))
         Scaffold(
             topBar = {
                 setupTopBar(
