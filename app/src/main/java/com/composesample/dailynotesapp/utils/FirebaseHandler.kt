@@ -21,6 +21,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 fun verifyUserLoginWithFirebase(
     mutableStateLoader: MutableState<Boolean>,
