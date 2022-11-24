@@ -3,6 +3,7 @@ package com.composesample.dailynotesapp.composecomponents
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Divider
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,10 +17,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composesample.dailynotesapp.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-@Preview
 @Composable
-fun setupDrawerMenu()
+fun setupDrawerMenu(scaffoldState: ScaffoldState,coroutineScope: CoroutineScope)
 {
     Column(
         content = {
@@ -91,7 +93,9 @@ fun setupDrawerMenu()
                     fontSize = 15.sp
                 ),
                 onClick ={
-
+                    coroutineScope.launch {
+                        scaffoldState.drawerState.close()
+                    }
                 },
                 modifier = Modifier.wrapContentHeight().wrapContentWidth().padding(10.dp,10.dp,0.dp,0.dp)
             )

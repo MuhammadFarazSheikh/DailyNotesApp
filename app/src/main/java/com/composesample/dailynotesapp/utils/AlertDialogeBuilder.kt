@@ -19,7 +19,7 @@ import androidx.compose.ui.window.Dialog
 import com.composesample.dailynotesapp.R
 
 @Composable
-fun showMessageAlertWithOkButton(title:String,messageText:String,okButton:()->Unit)
+fun showMessageAlertWithOkAndCancelButton(title:String,messageText:String,okButton:()->Unit,cancelButton:()->Unit)
 {
     AlertDialog(
         onDismissRequest = {},
@@ -55,7 +55,22 @@ fun showMessageAlertWithOkButton(title:String,messageText:String,okButton:()->Un
                         )
         },
         backgroundColor = Color.White,
-        shape = RoundedCornerShape(7.dp)
+        shape = RoundedCornerShape(7.dp),
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    cancelButton.invoke()
+                },
+                content = {
+                    Text(
+                        stringResource(R.string.text_cancel_button),
+                        color = Color.DarkGray,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp
+                    )
+                }
+            )
+        }
     )
 }
 

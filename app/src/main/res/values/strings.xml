@@ -28,4 +28,5 @@
     <string name="text_share_app">Share App</string>
     <string name="text_rate_app">Rate App</string>
     <string name="text_logout">Logout</string>
+    <string name="text_cancel_button">CANCEL</string>
 </resources>

@@ -52,7 +52,7 @@ class DashboardScreen : AppCompatActivity() {
             },
             scaffoldState = scaffoldState,
             drawerContent = {
-                setupDrawerMenu()
+                setupDrawerMenu(scaffoldState,coroutineScope)
             }
         )
     }
