@@ -1,4 +1,4 @@
-package com.composesample.dailynotesapp.composecomponents
+package com.composesample.dailynotesapp.presentation.composablescreens
 
 import androidx.compose.foundation.Image
 import androidx.compose.material.*

@@ -1,4 +1,4 @@
-package com.composesample.dailynotesapp.models
+package com.composesample.dailynotesapp.domain.repository.models
 
 data class UserData(
     var fullName:String,

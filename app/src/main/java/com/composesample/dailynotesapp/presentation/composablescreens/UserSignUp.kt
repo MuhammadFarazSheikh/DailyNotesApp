@@ -1,10 +1,9 @@
-package com.composesample.dailynotesapp.composecomponents
+package com.composesample.dailynotesapp.presentation.composablescreens
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import com.composesample.dailynotesapp.R
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
@@ -26,15 +25,17 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composesample.dailynotesapp.AppClass.Companion.appContext
+import com.composesample.dailynotesapp.R
+import com.composesample.dailynotesapp.utils.registerUserWithFirebase
 import com.composesample.dailynotesapp.utils.showLoaderAlert
-import com.composesample.dailynotesapp.utils.verifyUserLoginWithFirebase
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun setupLoginScreen(coroutineScope: CoroutineScope)
+fun setupSignUpScreen(coroutineScope: CoroutineScope)
 {
-    val isShowLoaderDialoge = remember{ mutableStateOf(false) }
-    val isFirebaseLogin = remember{ mutableStateOf(false) }
+    val isShowLoaderAlertDialoge = remember{ mutableStateOf(false) }
+    val isAddToFireStore = remember { mutableStateOf(false) }
+    val textFieldFullName = remember{ mutableStateOf(String()) }
     val textFieldEmailState = remember{ mutableStateOf(String()) }
     val textFieldPasswordState = remember{ mutableStateOf(String()) }
 
@@ -47,13 +48,42 @@ fun setupLoginScreen(coroutineScope: CoroutineScope)
         content = {
 
             Image(
-                painter = painterResource(R.drawable.login_icon),
+                painter = painterResource(R.drawable.signup_icon),
                 contentDescription ="",
                 colorFilter = ColorFilter.tint(color = Color.LightGray),
                 modifier = Modifier
                     .height(150.dp)
                     .width(150.dp)
                     .align(Alignment.CenterHorizontally)
+            )
+
+            TextField(
+                value = textFieldFullName.value ,
+                onValueChange = { value->
+                    textFieldFullName.value = value
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(0.dp, 50.dp, 0.dp, 0.dp)
+                    .background(color = Color.LightGray, RoundedCornerShape(5.dp)),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    textColor = Color.White,
+                    cursorColor = Color.Black
+                ),
+                placeholder = {
+                    Text(
+                        stringResource(R.string.hint_full_name),
+                        fontSize = 15.sp,
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email
+                )
             )
 
             TextField(
@@ -64,7 +94,7 @@ fun setupLoginScreen(coroutineScope: CoroutineScope)
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(0.dp, 50.dp, 0.dp, 0.dp)
+                    .padding(0.dp, 13.dp, 0.dp, 0.dp)
                     .background(color = Color.LightGray, RoundedCornerShape(5.dp)),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color.Transparent,
@@ -117,7 +147,11 @@ fun setupLoginScreen(coroutineScope: CoroutineScope)
 
             TextButton(
                 onClick = {
-                    if(textFieldEmailState.value.isNullOrBlank() || textFieldEmailState.value.isNullOrEmpty())
+                    if(textFieldFullName.value.isNullOrBlank() || textFieldFullName.value.isNullOrEmpty())
+                    {
+                        Toast.makeText(appContext, appContext.getString(R.string.text_fullname_empty),Toast.LENGTH_LONG).show()
+                    }
+                    else if(textFieldEmailState.value.isNullOrBlank() || textFieldEmailState.value.isNullOrEmpty())
                     {
                         Toast.makeText(appContext, appContext.getString(R.string.text_email_empty),Toast.LENGTH_LONG).show()
                     }
@@ -125,17 +159,17 @@ fun setupLoginScreen(coroutineScope: CoroutineScope)
                     {
                         Toast.makeText(appContext, appContext.getString(R.string.text_password_empty),Toast.LENGTH_LONG).show()
                     }
-                    else {
-                        isFirebaseLogin.value = true
+                    else{
+                        isAddToFireStore.value = true
                     }
                 },
                 content = {
-                          Text(
-                              stringResource(R.string.text_login),
-                              fontWeight = FontWeight.SemiBold,
-                              color = Color.White,
-                              fontSize = 15.sp
-                          )
+                    Text(
+                        stringResource(R.string.text_signup),
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White,
+                        fontSize = 15.sp
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -149,16 +183,21 @@ fun setupLoginScreen(coroutineScope: CoroutineScope)
         },
     )
 
-    if(isFirebaseLogin.value)
+    if(isAddToFireStore.value)
     {
-        isShowLoaderDialoge.value = true
-        verifyUserLoginWithFirebase(isShowLoaderDialoge,isFirebaseLogin,coroutineScope,textFieldEmailState.value+"-"+textFieldPasswordState.value)
+        isShowLoaderAlertDialoge.value = true
+        registerUserWithFirebase(
+            isShowLoaderAlertDialoge,
+            isAddToFireStore,
+            coroutineScope,
+            textFieldFullName.value,
+            textFieldEmailState.value,
+            textFieldPasswordState.value
+        )
     }
 
-    if(isShowLoaderDialoge.value)
+    if(isShowLoaderAlertDialoge.value)
     {
-        showLoaderAlert(
-            stringResource(R.string.text_user_login)
-        )
+        showLoaderAlert(stringResource(R.string.text_signup_loading_text))
     }
 }

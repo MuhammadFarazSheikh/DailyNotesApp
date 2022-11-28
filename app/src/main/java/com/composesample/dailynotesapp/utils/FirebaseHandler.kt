@@ -11,7 +11,7 @@ import com.composesample.dailynotesapp.activities.Constants.Companion.dailyNotes
 import com.composesample.dailynotesapp.activities.Constants.Companion.userDailyNotesListLiveData
 import com.composesample.dailynotesapp.activities.DashboardScreen
 import com.composesample.dailynotesapp.activities.utils.PreferenceDataStore
-import com.composesample.dailynotesapp.models.UserData
+import com.composesample.dailynotesapp.domain.repository.models.UserData
 import com.composesample.dailynotesapp.utils.Keys.Companion.FIREBASE_DAILY_NOTES_COLLECTION
 import com.composesample.dailynotesapp.utils.Keys.Companion.FIREBASE_DAILY_NOTES_LIST
 import com.google.firebase.firestore.DocumentSnapshot

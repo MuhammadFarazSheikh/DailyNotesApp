@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.composesample.dailynotesapp.models.UserData
+import com.composesample.dailynotesapp.domain.repository.models.UserData
 import com.composesample.dailynotesapp.utils.Keys.Companion.IS_USER_LOGGED_IN
 import com.composesample.dailynotesapp.utils.Keys.Companion.PREFERENCE_DATA_STORE_NAME
 import com.composesample.dailynotesapp.utils.Keys.Companion.USER_EMAIL
