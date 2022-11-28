@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,43 +54,68 @@ fun dailyNotesListScreen(coroutineScope: CoroutineScope)
                         { index, item ->
                             ConstraintLayout(
                                 content = {
-                                    val (textDailyNoteConstraint, deleteIconConstraint) = createRefs()
+                                    val (
+                                        textDailyNoteConstraint,
+                                        deleteButtonConstraint,
+                                        updateButtonConstraint
+                                    ) = createRefs()
                                     Text(
                                         text = item,
                                         fontSize = 16.sp,
                                         color = Color.White,
                                         modifier = Modifier
                                             .fillMaxWidth()
+                                            .defaultMinSize(minHeight = 100.dp)
                                             .padding(10.dp, 0.dp)
                                             .constrainAs(textDailyNoteConstraint)
                                             {
-                                                top.linkTo(parent.top, 11.dp)
-                                                bottom.linkTo(parent.bottom, 7.dp)
+                                                top.linkTo(parent.top, 5.dp)
                                             },
                                         textAlign = TextAlign.Start
                                     )
 
-                                    IconButton(
+                                    TextButton(
                                         onClick = {
-                                            isShowLoaderDeleteDailyNotes.value = true
-                                            deleteDailyNote(
-                                                coroutineScope, isShowLoaderDeleteDailyNotes, index
-                                            )
+
                                         },
                                         content = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.delete_icon),
-                                                contentDescription = ""
+                                            Text(
+                                                stringResource(R.string.text_delete_button),
+                                                color = Color.White,
+                                                fontSize = 13.sp,
+                                                fontWeight = FontWeight.SemiBold
                                             )
                                         },
-                                        modifier = Modifier
-                                            .wrapContentWidth()
+                                        shape = RoundedCornerShape(25.dp),
+                                        modifier = Modifier.constrainAs(deleteButtonConstraint) {
+                                            top.linkTo(textDailyNoteConstraint.bottom,7.dp)
+                                            start.linkTo(parent.start)
+                                            end.linkTo(updateButtonConstraint.start)
+                                        }.width(0.dp)
                                             .wrapContentHeight()
-                                            .constrainAs(deleteIconConstraint)
-                                            {
-                                                top.linkTo(parent.top, -20.dp)
-                                                end.linkTo(parent.end, -20.dp)
-                                            }
+                                            .background(color = Color.DarkGray)
+                                            )
+
+                                    TextButton(
+                                        onClick = {
+
+                                        },
+                                        content = {
+                                            Text(
+                                                stringResource(R.string.text_update_button),
+                                                color = Color.White,
+                                                fontSize = 13.sp,
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                        },
+                                        shape = RoundedCornerShape(25.dp),
+                                        modifier = Modifier.constrainAs(deleteButtonConstraint) {
+                                            top.linkTo(textDailyNoteConstraint.bottom,7.dp)
+                                            start.linkTo(deleteButtonConstraint.end)
+                                            end.linkTo(parent.end)
+                                        }.width(0.dp)
+                                            .wrapContentHeight()
+                                            .background(color = Color.DarkGray)
                                     )
                                 },
                                 modifier = Modifier
