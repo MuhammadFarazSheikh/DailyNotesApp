@@ -8,6 +8,8 @@ import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
@@ -38,6 +40,7 @@ class DashboardScreen : AppCompatActivity() {
     @Preview
     fun dashboardSetup()
     {
+        val isShowActionIcons = remember{ mutableStateOf(false) }
         val navController = rememberNavController()
         val coroutineScope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(DrawerState(initialValue = DrawerValue.Closed))
@@ -46,11 +49,16 @@ class DashboardScreen : AppCompatActivity() {
                 setupTopBar(
                     stringResource(R.string.text_dashboard_title),
                     coroutineScope,
-                    scaffoldState
+                    scaffoldState,
+                    isShowActionIcons
                 )
             },
             content = { paddingValues ->
-                setupNavigationComponent(navController,coroutineScope)
+                setupNavigationComponent(
+                    navController,
+                    coroutineScope,
+                    isShowActionIcons
+                )
             },
             scaffoldState = scaffoldState,
             drawerContent = {
