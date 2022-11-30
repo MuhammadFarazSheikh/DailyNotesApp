@@ -10,6 +10,5 @@ class Constants
         const val DAILY_NOTES_LIST_ROUTE = "DailyNotesList"
         val dailyNotesList = ArrayList<String>()
         val userDailyNotesListLiveData = MutableLiveData<ArrayList<String>>(arrayListOf())
-        val setSelectedNotes = arrayListOf<Int>()
     }
 }
