@@ -11,6 +11,7 @@ import com.composesample.dailynotesapp.activities.Constants.Companion.dailyNotes
 import com.composesample.dailynotesapp.activities.Constants.Companion.userDailyNotesListLiveData
 import com.composesample.dailynotesapp.activities.DashboardScreen
 import com.composesample.dailynotesapp.activities.utils.PreferenceDataStore
+import com.composesample.dailynotesapp.domain.remote.models.NoteData
 import com.composesample.dailynotesapp.domain.repository.models.UserData
 import com.composesample.dailynotesapp.utils.Keys.Companion.FIREBASE_DAILY_NOTES_COLLECTION
 import com.composesample.dailynotesapp.utils.Keys.Companion.FIREBASE_DAILY_NOTES_LIST
@@ -122,7 +123,7 @@ fun addNoteToFirebase(
     coroutineScope.launch {
         PreferenceDataStore.getUserData(appContext).collectLatest { userData ->
             userData?.email?.let {
-                dailyNotesList.add(noteText)
+                dailyNotesList.add(NoteData(false,noteText))
                 Firebase
                     .firestore
                     .collection(FIREBASE_DAILY_NOTES_COLLECTION)
@@ -163,11 +164,7 @@ fun getUserDailyNotes(
                     .get()
                     .addOnSuccessListener { documentSnapshot ->
                         mutableStateLoader.value = false
-                        userDailyNotesListLiveData.value= documentSnapshot.get(FIREBASE_DAILY_NOTES_LIST) as ArrayList<String>?
-                        userDailyNotesListLiveData?.value?.let {
-                            dailyNotesList.clear()
-                            dailyNotesList.addAll(it)
-                        }
+                        userDailyNotesListLiveData.value=documentSnapshot.toObject(ArrayList<NoteData>::class.java)
                     }.addOnCanceledListener {
                         mutableStateLoader.value = false
                     }.addOnCompleteListener {
