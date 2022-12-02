@@ -52,7 +52,7 @@ fun dailyNotesListScreen(coroutineScope: CoroutineScope,isShowActionsIcons: Muta
                               {
                                   index, item ->
                                   Text(
-                                      text = item,
+                                      text = item.note,
                                       fontSize = 16.sp,
                                       color = Color.White,
                                       modifier = Modifier

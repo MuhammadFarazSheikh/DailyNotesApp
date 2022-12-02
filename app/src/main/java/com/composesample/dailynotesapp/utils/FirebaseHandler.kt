@@ -19,6 +19,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -164,7 +165,7 @@ fun getUserDailyNotes(
                     .get()
                     .addOnSuccessListener { documentSnapshot ->
                         mutableStateLoader.value = false
-                        userDailyNotesListLiveData.value=documentSnapshot.toObject(ArrayList<NoteData>::class.java)
+                        userDailyNotesListLiveData.value= Gson().fromJson(documentSnapshot.data.toString(),object:TypeToken<ArrayList<NoteData>>(){}.type)
                     }.addOnCanceledListener {
                         mutableStateLoader.value = false
                     }.addOnCompleteListener {
